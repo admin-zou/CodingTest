@@ -1155,4 +1155,1065 @@ public:
 };
 
 //LeetCode 22.
+class Solution {
+public:
+	vector<string> generateParenthesis(int n)
+	{
+		vector<string> last;
+		if (n <= 0)
+		{
+			return last;
+		}
+		int left = n - 1, right = n;
+		string tmp = "(";
+		//递归去发现符合条件的情况
+		solve(last, tmp, left, right);
+		return last;
+	}
+	
+	void solve(vector<string>&last, string tmp, int left, int right)
+	{
+		if (left == 0)
+		{
+			while (right)
+			{
+				tmp.push_back(')');
+				--right;
+			}
+			last.push_back(tmp);
+			return;
+		}
+		tmp.push_back('(');
+		solve(last, tmp, left - 1, right);
+		if (right > left)
+		{//只有这种情况下，才能给tmp的后面加上 ‘)’,否则不行
+			tmp.pop_back();
+			tmp.push_back(')');
+			solve(last, tmp, left, right - 1);
+		}
+	}
+};
+
+//LeetCode 23.
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) 
+    {
+        /*
+            合并k个排序链表
+            极端情况是n个只有一个节点的链表
+            所以不能循环的去做，我想到了归并排序的方法
+        */
+        
+        ListNode *list1;
+        ListNode *list2;
+        //归并排序
+        int len = lists.size();
+        if(len == 0)
+        {
+            return NULL;
+        }
+        if(len == 1)
+        {
+            return lists[0];
+        }
+        
+        int mid=len/2;
+        domerge(list1,lists,0,mid);
+        domerge(list2,lists,mid+1,len-1);
+        ListNode *newHead = merge(list1,list2);
+        return newHead;
+    }   
+    
+    void domerge(ListNode*& list,vector<ListNode*>&lists,int begin,int end)
+    {
+        if(begin > end)
+        {
+            list=NULL;
+        }
+        if(begin == end) 
+        {//返回
+            list=lists[begin];
+        }
+        
+        if(end-begin == 1)
+        {//合并
+            list=merge(lists[begin],lists[end]);  
+        }
+        
+        if(end-begin >1)
+        {//继续二分
+            int mid = begin+(end-begin)/2;
+            ListNode *l1;
+            ListNode *l2;
+            domerge(l1,lists,begin,mid);
+            domerge(l2,lists,mid+1,end);
+            list=merge(l1,l2);
+        }
+    }
+    
+    ListNode *merge(ListNode *l1,ListNode *l2)
+    {
+        if(l1 == NULL && l2==NULL)
+        {
+            return NULL;
+        }
+        if(l1 == NULL)
+        {
+            return l2;
+        }
+        if(l2 == NULL)
+        {
+            return l1;
+        }
+        ListNode *ret = NULL;
+        if(l1->val <= l2->val)
+        {
+            ret = l1;
+            l1 = l1->next;
+        }
+        else
+        {
+            ret = l2;
+            l2 = l2->next;
+        }
+        ret->next = NULL;
+        ListNode* cur = ret;
+        while(l1 && l2)
+        {
+            if(l1->val <= l2->val)
+            {
+                cur->next = l1;
+                l1 = l1->next;
+                cur=cur->next;
+            }
+            else
+            {
+                cur->next = l2;
+                l2 = l2->next;
+                cur = cur->next;
+            }
+            cur->next = NULL;
+        }
+        if(l1)
+        {
+            cur->next = l1;
+        }
+        if(l2)
+        {
+            cur->next = l2;
+        }
+        return ret;
+    }
+};
+
+//LeetCode 24.
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) 
+    {
+        /*
+            合并k个排序链表
+            极端情况是n个只有一个节点的链表
+            所以不能循环的去做，我想到了归并排序的方法
+        */
+        
+        ListNode *list1;
+        ListNode *list2;
+        //归并排序
+        int len = lists.size();
+        if(len == 0)
+        {
+            return NULL;
+        }
+        if(len == 1)
+        {
+            return lists[0];
+        }
+        
+        int mid=len/2;
+        domerge(list1,lists,0,mid);
+        domerge(list2,lists,mid+1,len-1);
+        ListNode *newHead = merge(list1,list2);
+        return newHead;
+    }   
+    
+    void domerge(ListNode*& list,vector<ListNode*>&lists,int begin,int end)
+    {
+        if(begin > end)
+        {
+            list=NULL;
+        }
+        if(begin == end) 
+        {//返回
+            list=lists[begin];
+        }
+        
+        if(end-begin == 1)
+        {//合并
+            list=merge(lists[begin],lists[end]);  
+        }
+        
+        if(end-begin >1)
+        {//继续二分
+            int mid = begin+(end-begin)/2;
+            ListNode *l1;
+            ListNode *l2;
+            domerge(l1,lists,begin,mid);
+            domerge(l2,lists,mid+1,end);
+            list=merge(l1,l2);
+        }
+    }
+    
+    ListNode *merge(ListNode *l1,ListNode *l2)
+    {
+        if(l1 == NULL && l2==NULL)
+        {
+            return NULL;
+        }
+        if(l1 == NULL)
+        {
+            return l2;
+        }
+        if(l2 == NULL)
+        {
+            return l1;
+        }
+        ListNode *ret = NULL;
+        if(l1->val <= l2->val)
+        {
+            ret = l1;
+            l1 = l1->next;
+        }
+        else
+        {
+            ret = l2;
+            l2 = l2->next;
+        }
+        ret->next = NULL;
+        ListNode* cur = ret;
+        while(l1 && l2)
+        {
+            if(l1->val <= l2->val)
+            {
+                cur->next = l1;
+                l1 = l1->next;
+                cur=cur->next;
+            }
+            else
+            {
+                cur->next = l2;
+                l2 = l2->next;
+                cur = cur->next;
+            }
+            cur->next = NULL;
+        }
+        if(l1)
+        {
+            cur->next = l1;
+        }
+        if(l2)
+        {
+            cur->next = l2;
+        }
+        return ret;
+    }
+};
+
+//LeetCode 25.
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) 
+    { 
+        /*
+            上个题的优化，现在允许依次逆序k个节点
+            若出现节点不足k个时候（可能出现在最后一次中也可能是第一段），"剩下的不能逆序"
+            k = 1的时候不需要逆序的
+        */
+        if(head==NULL || head->next == NULL || k == 1)
+        {
+            return head;
+        }
+        
+        ListNode *Head = NULL;   //用于返回头结点
+        
+        ListNode *prev = head;  //用于逆序
+        ListNode *cur = prev->next; //用于逆序
+        
+        ListNode *pprev = head; //用于表示前一段的最后一个节点，用于连接
+        ListNode *first = head; //用于标记第一个节点（逆序后该节点是最后一个节点，这个节点很重要）
+        ListNode *tmphead = NULL;//用于标记每一逆序段的头结点
+        
+        while(cur)
+        {
+            int count = k;
+            prev = first;
+            cur = prev->next;
+            tmphead = prev;
+            if(morethank(prev,k))
+            {//测试剩下的节点的长度，若不够k的话就不在逆序了
+                tmphead->next = NULL;
+                while(--count && cur)
+                {
+                    prev = cur;
+                    cur = cur->next;
+                    prev->next = tmphead;
+                    tmphead = prev;
+                    //--count;
+                }
+                if(Head == NULL)
+                {
+                    Head = tmphead;
+                    //first = cur;
+                }
+                else
+                {
+                    pprev->next = tmphead;
+                    pprev = first;
+                    //first = cur;
+                }
+                first = cur;
+            }
+            else
+            {//剩余长度不够k则不能逆序了
+                if(Head == NULL)
+                { //第一段不够
+                    Head = head;   
+                }
+                else
+                { // 最后一段长度不够
+                    pprev->next = prev;
+                }
+                break;
+            }
+        }
+        
+        return Head;
+    }
+    
+    bool morethank(ListNode *pnode,int k)
+    {//1 2 3 4 5     3
+        ListNode *tmp = pnode;
+        while(k && tmp)
+        {
+            --k;
+            tmp = tmp->next;
+        }
+        if(k == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+};
+
+//LeetCode 26.
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) 
+    {
+        /*
+            1.不准备额外使用空间
+            2.返回删除重复节点后的数组长度
+            3.数组有序
+        */    
+        int len = nums.size();
+        if(len == 0 || len == 1)
+        {
+            return len;
+        }
+        int only = 0; // 用于记录不重复的下标，最后该下标以及以前的部分都是only one 
+        int prev = 0;
+        int cur = 1;  //用于遍历
+        
+        
+        //找出前面不相同的序列
+        while(cur<len && nums[only] != nums[cur])
+        {
+            ++cur;
+            ++only;
+        }
+        if(cur == len)
+        {
+            return only+1;
+        }
+        
+        while(cur < len)
+        {
+           if(nums[cur] == nums[cur-1])
+           {
+               prev = cur-1;
+               while(cur<len && nums[prev] == nums[cur])
+               {
+                  ++cur;
+               }
+               nums[only++] = nums[prev];
+           }
+           else
+           {
+               nums[only++] = nums[cur++];
+               while(cur < len && nums[cur] == nums[cur-1])
+               {
+                  ++cur;
+               }
+           }
+        }
+        
+        return only;
+    }
+};
+
+//LeetCode 27.
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) 
+    {
+        /*
+            该题的意思是删除掉数组里面的特定值
+        */
+        
+        int len = nums.size();
+        int pos = 0;  //当前值
+        int nextpos = 0;  //在前面找是否出现了val值
+        int numofval = 0;  //统计出现了几次val值，最后好确定返回的长度
+        bool begin = false; //前面的不是val的值不能被覆盖，所以我们需要注意一下
+        
+        while(nextpos < len)
+        {
+            if(nums[nextpos] == val)
+            {
+                begin = true;
+                ++numofval;
+                nextpos = nextpos+1;
+                while(nextpos < len && nums[nextpos] != val)
+                {
+                    nums[pos++] = nums[nextpos++];
+                }
+            }
+            else
+            {
+                if(!begin)
+                {
+                    ++pos;
+                }
+                ++nextpos;
+            }
+        }
+        
+        return len-numofval;
+    }
+};
+
+//LeetCode 28.
+class Solution {
+public:
+    int strStr(string haystack, string needle) 
+    {
+        /*
+            needle在haystack中第一次出现的位置-------->KMP算法
+        */
+        int hlen = haystack.size();
+        int nlen = needle.size();
+        if(hlen == 0 && nlen == 0)
+        {
+            return 0;
+        }
+        if(nlen == 0 )
+        {
+            return 0;
+        }
+        if(hlen == 0)
+        {
+            return -1;
+        }
+        //初始化next数组
+        int *next = new int[nlen];
+        for(int i=0; i<nlen; ++i)
+        {
+            next[i] = 0;
+        }
+        
+        //构造next数组
+        CreteNext(needle,next,nlen);
+        
+        //开始匹配
+        int s=0;
+        int p=0;
+        while(s < hlen)
+        {
+            if(haystack[s] == needle[p])
+            {
+                ++s;
+                ++p;
+                if(p == nlen)
+                {//匹配
+                    return s-nlen;
+                }
+            }
+            else if(next[p] == -1)
+            {
+                ++s;
+            }
+            else
+            {
+                p = next[p];
+            }
+        }
+        //循环出来了说明没找到
+        delete []next;
+        return -1;
+    }
+    
+    void CreteNext(string &need,int*& next, int n)
+    {
+        int left = 0;
+        int right = 1;
+        while(right < n)
+        {
+            if(need[right] == need[left])
+            {
+                next[right] = next[right-1]+1;
+                ++left;
+                //++right;
+            }
+            else if(need[right] == need[0])
+            {
+                next[right] = 1;
+                left = 1;
+                //++right;
+            }
+            else
+            {
+                left = 0;
+                next[right] = 0;
+                //++right;
+            }
+            ++right;
+        }
+        
+        //next数组的数向右平移一位，然后next[0] = -1，netx数组就构造好了
+        for(int j=n-1;j>0;--j)
+        {
+            next[j] = next[j-1];
+        }
+        next[0] = -1;
+    }
+};
+
+//LeetCode 29.
+class Solution {
+public:
+	int divide(int dividend, int divisor)
+	{
+		//求两个数的商
+		//1.被除数为0
+		if (divisor == 0)
+		{//不合法的数
+			return 0;
+		}
+		//2.除数为 0
+		if (dividend == 0)
+		{//除数为0
+			return 0;
+		}
+		//3.被除数为1
+		if (divisor == 1)
+		{
+			return dividend;
+		}
+		//4.被除数为2
+		else if (divisor == 2)
+		{
+			return dividend >> 1;
+		}
+		//5.考虑溢出问题,正数溢出或者负数溢出
+		double maxint = pow(2, 31) - 1;
+		if (dividend - maxint > 0.000001)
+		{
+			dividend = int(maxint);
+		}
+		if (divisor - maxint > 0.000001)
+		{
+			divisor = int(maxint);
+		}
+		if(dividend < maxint*(-1) && divisor < maxint*(-1))
+		{// 例如：-2147483648 / -2147483648  
+		    return 1;
+		}
+		if (dividend < maxint*(-1))
+		{
+			dividend = maxint*(-1);
+		}
+		if (divisor < maxint*(-1))
+		{//被除数越界 例如：(1~2147483647) / -2147483648
+			//divisor = maxint*(-1);
+			return 0;
+		}
+		//6.考虑正负号
+		int minus = 1; //商是否为负数
+		if (dividend < 0 && divisor < 0)
+		{
+			dividend *= -1;
+			divisor *= -1;
+			if (divisor > dividend)
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			if (dividend < 0)
+			{
+				dividend *= -1;
+				minus = -1;
+			}
+			if (divisor < 0)
+			{
+				divisor *= -1;
+				minus = -1;
+			}
+		}
+		if (dividend == divisor)
+		{   //例如： 1 / -1
+			return 1*minus;
+		}
+		//7.被除数为1
+		if (divisor == 1)
+		{   //例如： -1 / -1
+			return dividend;
+		}
+		else if (divisor == 2)
+		{ //例如： -6 / -2
+			return dividend >> 1;
+		}
+		//8.开始求商 25 / 4   -> 6   4<<2--16  25  4<<3--32  所以，商在4~8之间
+		int left = 0;
+		int right = 1;
+		int ret = 0;
+		int mybeover = maxint / 2;
+		while (dividend > divisor)
+		{
+			left = 0;
+			right = 1;
+			while ((divisor << right) < dividend)
+			{
+				if ((divisor << left) >= mybeover)
+				{
+					break;
+				}
+				++left;
+				++right;
+			}
+			ret += 1 << left;
+			dividend -= divisor << left;
+		}
+		return ret*minus;
+	}
+};
+
+//LeetCode 30.
+class Solution 
+{ 
+public: 	
+	vector<int> findSubstring(string s, vector<string>& words) 
+	{ 
+		vector<int> ret;
+		ret.clear();
+		map<string, int> Map;
+		map<string, int> temp;
+		Map.clear();
+		temp.clear();
+		int slen = s.size();
+		int wlen = words.size();
+		if (slen == 0 || wlen == 0)
+		{	return ret;	}
+		
+		int perlen = words[0].size();
+		if ( wlen * perlen > slen)
+		{	return ret;	}
+
+		for (int i = 0; i < wlen; ++i)
+		{
+			Map[words[i]]++;
+		}
+
+		for (int i = 0; i + perlen*wlen-1 < slen; ++i)
+		{
+			int j = i;
+			temp.clear();
+			while (j <= i + wlen*perlen - 1)
+			{
+				temp[s.substr(j, perlen)]++;
+				if (Map[s.substr(j, perlen)] < temp[s.substr(j, perlen)])
+				{//
+					break;
+				}
+				else
+				{
+					j += perlen;
+				}
+				if (j>i + wlen*perlen - 1)
+				{
+					ret.push_back(i);
+				}
+			}
+		}
+		return ret;
+	} 
+};
+
+//LeetCode 31.
+class Solution {
+public:
+	void nextPermutation(vector<int>& nums)
+	{
+		int len = nums.size();
+		if (len == 0 || len == 1)
+		{
+			return;
+		}
+		//从尾部向前找,找到nums[pos] > nums[pos-1]位置
+		int pos = len - 1;
+		while (pos > 0 && nums[pos] <= nums[pos - 1])
+		{
+			--pos;
+		}
+
+		if (pos == 0)
+		{//说明到了最后一个位置，例如 3 2 1 ，此时将它排序即可
+			sort(nums.begin(), nums.end());
+			return;
+		}
+		else
+		{
+			if (pos == len - 1)
+			{//pos 在最后一个位置，例如 1 2 3 ，那么此时将nums[pos]与nums[pos-1]互换即可
+				swap(nums[pos], nums[pos - 1]);
+				return;
+			}
+			else
+			{ //这种情况说明pos在中间位置，举例吧，如：5 4 7 5 3 2   
+				int key = nums[pos - 1];
+				//找比key值大的数字，即比4大的数，可以看到是5（后面的5）
+				int begin = len - 1;
+				while (begin > pos && nums[begin] <= key)
+				{
+					--begin;
+				}
+				//此时 begin 位置的数字比 key 值大，因为至少pos位置的数比key值大，而且从pos到len-1之间的数字是降序的
+				swap(nums[pos - 1], nums[begin]);
+				//swap以后序列为 5 5 7 4 3 2，然后从pos位置到len-1位置排序，即7~2排序
+				sort(nums.begin() + pos, nums.end());
+				return;
+			}
+		}
+	}
+};
+
+//LeetCode 32.
+class Solution
+{
+public:
+    int longestValidParentheses(string s)
+    {
+        int slen = s.size();
+        stack<int> S;
+        int maxlen = 0;
+        int count = 0;
+        for(int i=0; i < slen; ++i)
+        {
+            if(s[i]=='(')
+            {// ‘(’ 压入下标 
+                S.push(i);
+            }
+            else
+            {
+                if( !S.empty() )
+                {//栈不空，则判断是否连续匹配
+                    count = S.top(); //栈顶下标
+                    if( s[count] == ')')
+                    {//这是不合法的位置，不用处理
+                        S.push(i);
+                    }
+                    else
+                    {
+                        S.pop();
+                        if(S.empty())
+                        {//全部匹配了栈会空
+                            maxlen = i+1;
+                        }
+                        else
+                        {//可能存在不合法的位置，用该位置来计算最长长度
+                            count = S.top();
+                            if(i-count > maxlen)
+                            {
+                                maxlen = i-count;
+                            }
+                        }
+                    }
+                }
+                else
+                {//这个位置说明它是不合法的位置，可以发挥一定的作用，用来计算匹配到的最长长度
+                    S.push(i);
+                }
+            }
+        }
+        return maxlen;
+    }
+};
+
+//LeetCode 33.
+class Solution {
+public:
+    int search(vector<int>& nums, int target)
+    { //这个题是给一个排序数组，但是数组里面内容被平行移动了，如上例所示，现在要找到tagert所对应的下标
+        int len = nums.size();
+        
+        //特殊情况先考虑掉
+        if(len == 0)
+        { return -1; }
+        if(len == 1 && target!=nums[0])
+        { return -1; }
+        
+        //正常情况，应该不能遍历一边数组吧，这样没有意义，应该也无法通过；虽然顺序被打乱了，但是部分还是有序的，我们还是使用二分查找
+        int left = 0;
+        int right = len-1;
+        int mid = 0;
+        while(left <= right)
+        {
+            mid = left + (right-left)/2;
+            
+            if(target == nums[left])
+            {
+                return left;
+            }
+            if(target == nums[right])
+            {
+                return right;
+            }
+            if(target == nums[mid])
+            {
+                return mid;
+            }
+            
+            //二分查找
+            if(nums[mid] >= nums[left])
+            {//左边有序
+                if(target > nums[left] && target < nums[mid])
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
+            else
+            {//右边有序
+                if(target > nums[mid] && target < nums[right])
+                {
+                    left = mid + 1;
+                }
+                else
+                {
+                    right = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+};
+
+//LeetCode 34.
+class Solution {
+public:
+	vector<int> searchRange(vector<int>& nums, int target)
+	{ //
+		vector<int> ret;
+		ret.clear();
+		int len = nums.size();
+		//非正常情况
+		if (len == 0 || target < nums[0] || target > nums[len - 1])
+		{
+			ret.push_back(-1);
+			ret.push_back(-1);
+			return ret;
+		}
+		int left = 0;
+		int right = len - 1;
+		int mid = 0;
+		//简单的二分查找时不能准确的找到开始和结束点的
+		while (left <= right && nums[left]<=target && nums[right]>=target)
+		{//有一边找到了target
+			mid = left + (right - left) / 2;
+			if (nums[mid] == target)
+			{
+				break;
+			}
+			if (nums[mid] < target)
+			{
+				left = mid + 1;
+			}
+			else
+			{
+				right = mid - 1;
+			}
+		}
+
+        if(nums[left]>target || nums[right]<target)
+        {
+            //不合格，最后一起处理
+        }
+		else if (left == right)
+		{
+			if (nums[left] == target)
+			{
+				ret.push_back(left);
+				ret.push_back(left);
+				return ret;
+			}
+			else
+			{
+				//没找到,到最后一起处理
+			}
+		}
+		else
+		{ // left < right ，说明nums[mid] == target，那么分别向左找开始点和向右找结束点
+			//左边
+			int lbegin = left;
+			int lend = mid;
+			int lmid = 0;
+			while (nums[lbegin] != target && nums[lbegin + 1] != target)
+			{
+				lmid = lbegin + (lend - lbegin) / 2;
+				if (nums[lmid] == target)
+				{//说明开始部位可能还在左边
+					lend = lmid;
+				}
+				else
+				{//nums[lmid]<target,此时说明在右边
+					lbegin = lmid;
+				}
+			}
+            //注意临界条件
+			if (nums[lbegin] == target)
+			{
+				ret.push_back(lbegin);
+			}
+			else
+			{
+				ret.push_back(lbegin + 1);
+			}
+
+			//右边
+			int rbegin = mid;
+			int rend = right;
+			int rmid = 0;
+			while (nums[rend] != target && nums[rend - 1] != target)
+			{
+				rmid = rbegin + (rend - rbegin) / 2;
+				if (nums[rmid] == target)
+				{//说明结束部位还在右边
+					rbegin = rmid;
+				}
+				else
+				{
+					rend = rmid;
+				}
+			}
+			//注意临界条件
+			if (nums[rend] == target)
+			{
+				ret.push_back(rend);
+			}
+			else
+			{
+				ret.push_back(rend - 1);
+			}
+			return ret;
+		}
+		
+		//没找到
+		ret.push_back(-1);
+		ret.push_back(-1);
+		return ret;
+	}
+};
+
+//LeetCode 35.
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) 
+    {
+        int len = nums.size();
+		if (len == 0)
+		{
+			return 0;
+		}
+		
+		int left = 0;
+		int right = len - 1;
+		int mid = 0;
+		if (target > nums[right])
+		{
+			return right + 1;
+		}
+
+		while (left < right)
+		{
+			mid = left + (right - left) / 2;
+			if (nums[left] == target)
+			{
+				return left;
+			}
+			if (nums[right] == target)
+			{
+				return right;
+			}
+			if (nums[mid] == target)
+			{
+				return mid;
+			}
+
+			if (nums[mid] > target)
+			{
+				right = mid;
+			}
+			else
+			{
+				left = mid + 1;
+			}
+		}
+		
+		return left;    
+    }
+};
+
 
