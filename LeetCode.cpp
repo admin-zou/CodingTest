@@ -2216,4 +2216,533 @@ public:
     }
 };
 
+//LeetCode 36
+class Solution {
+public:
+	bool isValidSudoku(vector<string>& board)
+	{//判断九宫格中的元素是否合法，只判断已填充的元素，未填充的元素不用考虑
+		/*
+		九宫格的规律是每行每列每宫都包含1~9各一次，所以我们只要判断每行每列每宫的已填充元素是否在1~9之间且无重复即可，所以我们可以使用set来解决此题...
+		*/
+
+		char *tmp = new char[9];
+		for (int i = 0; i<9; ++i)
+		{
+			int count = 0;
+			for (int j = 0; j<9; ++j)
+			{
+				tmp[count++] = board[i][j];
+			}
+			if (!check(tmp))
+			{
+				return false;
+			}
+
+			count = 0;
+			for (int j = 0; j<9; ++j)
+			{
+				tmp[count++] = board[j][i];
+			}
+			if (!check(tmp))
+			{
+				return false;
+			}
+
+			int x = (i / 3) * 3;
+			int y = (i % 3) * 3;
+			count = 0;
+			for (int j = x; j< x + 3; ++j)
+			{				
+				for (int k = y; k< y + 3; ++k)
+				{
+					tmp[count++] = board[k][j];
+				}
+			}
+			if (!check(tmp))
+			{
+				return false;
+			}
+		}
+		delete[] tmp;
+		return true;
+	}
+
+	bool check(char* str)
+	{
+		set<char> S;
+		S.clear();
+		for (int i = 0; i<9; ++i)
+		{
+			if (str[i] == '.')
+			{
+				continue;
+			}
+			if (str[i] <= '0' && str[i] > '9')
+			{
+				return false;
+			}
+			else
+			{
+				if (S.find(str[i]) == S.end())
+				{
+					S.insert(str[i]);
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+};
+
+//LeetCode 37
+class Solution {
+public:
+	void solveSudoku(vector<vector<char>>& board)
+	{
+		/*
+		返回类型为void不是很准确，假设该数独没有解的话，那么我们并不知道，到底是错误还是找到解了。
+		数独求解，最终还是遇到了，无法避免，那么我们就来战胜它，这类题是“回溯”的代表
+		*/
+		bool ret = _solveSudoku(board);
+		if (ret == true)
+		{
+			cout << "Find solve" << endl;
+		}
+		else
+		{
+			cout << "No Solve " << endl;
+		}
+	}
+
+	bool _solveSudoku(vector<vector<char>>& board)
+	{
+		for (int i = 0; i < 9; ++i)
+		{
+			for (int j = 0; j < 9; ++j)
+			{
+				if (board[i][j] == '.')
+				{
+					for (int k = 1; k <= 9; ++k)
+					{
+						board[i][j] = '0' + k;
+						if (isVild(board, i, j) && _solveSudoku(board))
+						{//成功则返回
+							return true;
+						}
+						//失败的话该位置再置为下一个测试值，但是先要还原原来的值，因为我们是用board的"引用",所以不能直接跳过
+						board[i][j] = '.';
+					}
+					//1~9都不满足的话,失败
+					return false;
+				}
+			}
+		}
+		/*
+		走到这里说明了一些问题：
+		1.成功了,不需要做什么
+		2.board中没有‘.’,这样就不会进入if循环，按理说这个时候需要再判断一次board是否是正解，但是没有判断却也没有错...
+		*/
+		return true;
+	}
+
+	bool isVild(vector<vector<char>> &board, int x, int y)
+	{
+		//横向
+		for (int i = 0; i < 9; ++i)
+		{
+			if (i != y && board[x][i] == board[x][y])
+			{//重复出现，非法
+				return false;
+			}
+		}
+		//纵向
+		for (int i = 0; i < 9; ++i)
+		{
+			if (i != x && board[i][y] == board[x][y])
+			{
+				return false;
+			}
+		}
+		//只检查x和y所在的宫内的元素即可    
+		int wid = 3 * (x / 3); //x起始位置
+		int hig = 3 * (y / 3); //y起始位置
+		for (int i = wid; i < wid + 3; ++i)
+		{
+			for (int j = hig; j < hig + 3; ++j)
+			{
+				if (i != x && j != y && board[i][j] == board[x][y])
+				{
+					return false;
+				}
+			}
+		}
+		//成功   
+		return true;
+	}
+};
+
+//LeetCode 38
+class Solution {
+public:
+	string countAndSay(int n)
+	{
+		string ret = "";
+		if (n == 0)
+		{
+			return ret;
+		}
+		//n == 1
+		string tmp = "1";
+		if (1 == n)
+		{
+			return tmp;
+		}
+		// n > 1
+		for (int i = 1; i < n; ++i)
+		{
+			ret.clear();
+			size_t j = 0;
+			while (j < tmp.size())
+			{
+				char ch = tmp[j];
+				int num = 1;
+				while (j + num < tmp.size() && tmp[j + num] == tmp[j])
+				{
+					++num;
+				}
+				if (1 == num)
+				{
+					ret.push_back('1');
+				}
+				else
+				{
+					ret.push_back(num + '0');
+				}
+				ret.push_back(tmp[j]);
+				j += num;
+			}
+			tmp = ret;
+		}
+
+		return ret;
+	}
+};
+
+//LeetCode 39
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) 
+    {
+        /*
+            看到这个题的第一眼开始，我就想到了这个题和前面讲到的twosum，threesum，foursum不同，这个题目可能是 nsum， 所以n层循环的
+        做法不可取，我想到了是否可以回溯：不断加入元素，去测试，若元素的和与target相等则满足题意，若大于target则推出循环，若小于则
+        可以继续测试。
+        */
+        vector<vector<int>> ret;
+        ret.clear();
+        vector<int> tmp;
+        tmp.clear();
+        //题目并没有说明candidates是有序的，但是题目要求的结果是不能出现重复的集合，那么我们需要对candidates排序
+        sort(candidates.begin(),candidates.end());
+        //还是采用递归加上回溯法进行求解
+        _findAllSolve(candidates,ret,tmp,target,0);
+        return ret;
+    }
+    
+    void _findAllSolve(vector<int>& candidates, vector<vector<int>>& ret,vector<int>& tmp,int target, int index)
+    {
+        if(target == 0)
+        {//此时说明tmp中的集合满足题意，加入到ret中
+            ret.push_back(tmp);
+            return ;
+        }
+        else
+        {
+            for(int i = index; i < candidates.size(); ++i)
+            {
+                if(candidates[i] > target)
+                {//题目中有说明candidates中元素都是非负的，而且candidates被排序过，此时可直接退出
+                    return ;
+                }
+                //target > candidates[i]  那么我们就将candidates[i]加入到tmp中
+                tmp.push_back(candidates[i]);
+                _findAllSolve(candidates,ret,tmp,target-candidates[i],i);
+                //完成上面的过程后需要及时将它们移除，再看看还有其他的解没有
+                tmp.pop_back();
+            }
+        }
+    }
+};
+
+//LeetCode 40
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) 
+    {
+        /*
+            看到这个题的第一眼开始，我就想到了这个题和前面讲到的twosum，threesum，foursum不同，这个题目可能是 nsum， 所以n层循环的
+        做法不可取，我想到了是否可以回溯：不断加入元素，去测试，若元素的和与target相等则满足题意，若大于target则推出循环，若小于则
+        可以继续测试。
+        */
+        vector<vector<int>> ret;
+        ret.clear();
+        vector<int> tmp;
+        tmp.clear();
+        //题目并没有说明candidates是有序的，但是题目要求的结果是不能出现重复的集合，那么我们需要对candidates排序
+        sort(candidates.begin(),candidates.end());
+        //还是采用递归加上回溯法进行求解
+        _findAllSolve(candidates,ret,tmp,target,0);
+        return ret;
+    }
+    
+    void _findAllSolve(vector<int>& candidates, vector<vector<int>>& ret,vector<int>& tmp,int target, int index)
+    {
+        if(target == 0)
+        {//此时说明tmp中的集合满足题意，加入到ret中
+            ret.push_back(tmp);
+            return ;
+        }
+        else
+        {
+            for(int i = index; i < candidates.size(); ++i)
+            {
+                if(candidates[i] > target)
+                {//题目中有说明candidates中元素都是非负的，而且candidates被排序过，此时可直接退出
+                    return ;
+                }
+                //target > candidates[i]  那么我们就将candidates[i]加入到tmp中
+                tmp.push_back(candidates[i]);
+                _findAllSolve(candidates,ret,tmp,target-candidates[i],i);
+                //完成上面的过程后需要及时将它们移除，再看看还有其他的解没有
+                tmp.pop_back();
+            }
+        }
+    }
+};
+
+//LeetCode 41
+class Solution {
+public:
+	int firstMissingPositive(vector<int>& nums)
+	{
+	    //这个题用位图或者哈希表都可以，不过使用bitset不是很方便，其大小决定不了，我还是开辟了nums.size()+1 大小的数组，若是连续全部都可以放下，不连续的话肯定会在中间断开的，没必要全部统计位置了
+		const size_t len = nums.size();
+		vector<int> tmp;
+		tmp.resize(len + 1);
+		for (size_t i = 0; i < len; ++i)
+		{
+			if (nums[i] > 0 && nums[i] <= len)
+			{
+				tmp[nums[i]] = 1;
+			}
+		}
+
+		for (size_t i = 1; i < len + 1; ++i)
+		{
+			if (tmp[i] == 0)
+			{
+				return i;
+			}
+		}
+
+		return len + 1;
+	}
+};
+
+//LeetCode 42
+class Solution {
+public:
+	int trap(vector<int>& height)
+	{
+	    /*
+	        这个题又是个数字游戏题，我做完了后发现它充满着陷阱，很难一次想到所有情况，调试了很多次才写好的，不过庆幸的是，这个题的问题很容易发现，我建议在动手之前请多画图，多联系生活列出一些特殊情况里帮助分析。
+	    */
+	    
+		int area = 0;
+		int len = height.size();
+		int begin = 0;
+		int end = 0;
+
+		while (begin < len)
+		{
+			end = begin;
+			//找最低谷
+			while (end < len-1 && height[end] > height[end + 1] && height[begin]>0)
+			{
+				++end;
+			}
+			if (end == begin)
+			{//没找到
+				++begin;
+				continue;
+			}
+
+            //找比构成面积的连续最高位置
+			int newbegin = end;
+			while (end + 1 < len && height[end] <= height[end+1])
+			{
+				++end;
+			}
+			if (end == newbegin)
+			{
+				begin = end+1;
+				continue;
+			}
+
+            //可能存在更高的位置，需要去找找看
+			if(height[begin] > height[end])
+			{
+			    //还需要找最高位置
+			    int nbegin = end;
+			    int nend = end;
+			    int maxheigh = height[end]; //记录最高位置
+			    
+			    while (nend < len)
+			    {
+				    if (height[nend] > maxheigh)
+				    {
+					    end = nend;
+					    maxheigh = height[nend];
+					    if (maxheigh > height[begin])
+						{//找到了高于height[begin]的位置就可以跳出循环了，因为此时已经是能够构成的最大容器了
+							break;
+						}
+				    }
+				    ++nend;
+			    }
+            }
+            
+            //选择begin和end的较小者，用来计算容器
+			int h = min(height[begin], height[end]);
+			for (size_t i = begin; i < end + 1; ++i)
+			{
+				int val = h - height[i];
+				if (val > 0)
+				{
+					area += val;
+				}
+			}
+			begin = end;
+		}
+
+		return area;
+	}
+};
+
+//LeetCode 43
+class Solution {
+public:
+	string multiply(string num1, string num2)
+	{
+		/*
+		这个题的意思是返回两个大数相乘的结果
+		两个乘数可以很大且非负
+		不能将字符串转化为int
+		不能使用大数相关的库
+		*/
+
+		string ret = "";
+		int sz1 = num1.size();
+		int sz2 = num2.size();
+        if (sz1 == 1 && num1[0] == '0' || sz2 == 1 && num2[0] == '0')
+		{
+			ret.push_back('0');
+			return ret;
+		}
+		
+		//先往右进位，最后将结果逆置一下
+		for (int i = sz1-1; i >=0; --i)
+		{
+			int begin = sz1 - i - 1;
+			for (int j = sz2-1; j >= 0; --j)
+			{
+				int tmp = (num1[i] - '0') * (num2[j] - '0');
+				carrybit(ret, begin, tmp);
+				++begin;
+			}
+		}
+
+		//逆序
+		reverse(ret);
+
+		return ret;
+	}
+
+	void carrybit(string& str, int begin, int num)
+	{
+		const int first = begin;
+		if (num == 0)
+		{
+			if (begin >= str.size())
+			{  // 相乘的结果为 0 且出现在最后面的位置，这个时候得补上0，否则缺位
+				str.push_back('0');
+			}
+		}
+
+		while (num)
+		{
+			int cur = num % 10;
+			if (begin >= str.size())
+			{//在最后面的位置上添加的时候得添加‘字符’
+				str.push_back(cur + '0');
+				++begin;
+			}
+			else
+			{//在中间的位置上只需要加‘整数’
+				str[begin++] += cur;
+			}
+			num /= 10;
+		}
+
+		//判断当前位是否产生进位
+		int bigger = str[first] - '0';
+		if (bigger >= 10)
+		{//判断当前位是否产生了进位，若进位则处理进位
+			curcarrybit(str, first, bigger);
+		}
+	}
+	
+	//进位处理函数
+	void curcarrybit(string &str, int  begin, int num)
+	{
+		int first = begin;
+		while (num)
+		{
+			int cur = num % 10;
+			if (begin >= str.size())
+			{
+				str.push_back(cur + '0');
+				++begin;
+			}
+			else
+			{
+				if (first == begin)
+				{//当前位产生进位，留下余下的，所以用赋值语句
+					str[begin++] = (cur + '0');
+				}
+				else
+				{//进位的数目补到后面的位置上
+					str[begin++] += cur;
+				}
+			}
+			num /= 10;
+		}
+	}
+
+	//翻转字符串
+	void reverse(string & s)
+	{
+		int right = s.size() - 1;
+		int left = 0;
+		while (left < right)
+		{
+			swap(s[left], s[right]);
+			++left;
+			--right;
+		}
+	}
+};
 
