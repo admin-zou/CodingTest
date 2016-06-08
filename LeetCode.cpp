@@ -2746,3 +2746,364 @@ public:
 	}
 };
 
+//LeetCode 44
+class Solution {
+public:
+	bool isMatch(string s, string p)
+	{
+		return Match(s.c_str(), p.c_str());
+	}
+	
+	bool Match(const char* s, const char* p)
+	{
+		const char * back = NULL;      //开始匹配的点
+		const char * sequence = NULL;  //标记 * 号
+
+		while (*s)
+		{
+			if (*p == '*')
+			{
+				back = s;
+				sequence = ++p;
+			}
+			else if (*p == '?' || *s == *p)
+			{
+				++s;
+				++p;
+			}
+			else if (sequence)
+			{
+				s == ++back;
+				p = sequence;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		while (*p == '*')
+		{
+			++p;
+		}
+		return (*p == '\0');
+	}
+};
+
+// LeetCode 45
+class Solution {
+public:
+	int jump(vector<int>& nums)
+	{
+		/*这类问题还是使用贪心算法*/
+		int pos = 0;
+		int length = nums.size();
+		int index = 0;
+
+		if (length == 0)
+		{
+			return 0;
+		}
+
+		while (index < length-1)
+		{
+			int next = 0;
+			int begin = index;
+			int onejump = 0;
+			for (int i = 1; i <= nums[index]; ++i)
+			{
+				if (nums[index] >= length-1 || index + i >= length || index + nums[index + i] >= length)
+				{// [1,3,2]  // [1,2]  // [2,3,1]	//9, 6, 6, 2, 3, 1, 0, 9, 2, 7				 
+					if (index + nums[index] < length - 1)
+					{
+						++pos;
+					}
+					next = length;
+					break;
+				}
+
+				if (i + nums[index+i] > onejump)
+				{
+					next = i;
+					onejump = i + nums[index + i];
+				}
+			}
+			++pos;
+			index += next;
+		}
+
+		return pos;
+	}
+};
+
+// LeetCode 46
+class Solution {
+public:
+	vector<vector<int>> permute(vector<int>& nums)
+	{
+		vector<vector<int>> ret;		
+		ret.clear();
+
+		if (nums.size() == 0)
+		{
+			//return ret;
+		}
+		else if (nums.size() == 1)
+		{
+			vector<int> tmp;
+			tmp.push_back(nums[0]);
+			ret.push_back(tmp);
+			//return ret;
+		}
+		else
+		{
+			solves(ret, nums, 0);
+		}
+	
+		return ret;
+	}
+	
+	void solves(vector<vector<int>>& ret, vector<int>nums, int index)
+	{
+		if (index > nums.size())
+		{
+			return;
+		}
+		else if (index + 1 == nums.size() || index == nums.size())
+		{
+			vector<int> tmp;
+			for (int i = 0; i < nums.size(); ++i)
+			{
+				tmp.push_back(nums[i]);
+			}
+			ret.push_back(tmp);
+			return;
+		}
+
+		int begin = index;
+		for (int i = index; i < nums.size(); ++i)
+		{
+			if (i != begin)
+			{
+				swap(nums[begin], nums[i]);
+			}
+			solves(ret, nums, index + 1);
+			//solves(ret, nums, i + 1);
+		}
+	}
+};
+
+// LeetCode 47
+class Solution {
+public:
+	vector<vector<int>> permuteUnique(vector<int>& nums) 
+	{
+		vector<vector<int>> ret;
+		ret.clear();
+
+		if (nums.size() == 0)
+		{
+			
+		}
+		else if (nums.size() == 1)
+		{
+			vector<int> tmp;
+			tmp.push_back(nums[0]);
+			ret.push_back(tmp);
+		}
+		else
+		{
+			sort(nums.begin(), nums.end());
+			solves(ret, nums, 0);
+		}
+
+		return ret;
+	}
+
+	void solves(vector<vector<int>>& ret, vector<int> nums, int index)
+	{
+		if (index > nums.size())
+		{
+			return;
+		}
+		else if (index +1 == nums.size())
+		{
+			vector<int> tmp;
+			for (int i = 0; i < nums.size(); ++i)
+			{
+				tmp.push_back(nums[i]);
+			}
+			ret.push_back(tmp);
+			return;
+		}
+		
+		int begin = index;
+		int prev = 0;
+		for (int i = index; i < nums.size(); ++i)
+		{
+			if (i != begin)
+			{
+				if (nums[i] == nums[begin] || nums[i] == prev)
+				{
+					continue;
+				}
+				swap(nums[begin], nums[i]);
+			}
+			solves(ret, nums, index + 1);
+			prev = nums[i];
+		}
+	}
+};
+
+// LeetCode 48
+class Solution {
+public:
+	void rotate(vector<vector<int>>& matrix)
+	{
+		int num = matrix.size();
+		for (int i = 0; i < num / 2; ++i)
+		{
+			rotateOne(matrix, i);
+		}
+	}
+	void rotateOne(vector<vector<int>>& matrix, int begin)
+	{
+		int len = matrix.size() - 2 * begin - 1;
+		int tmp = 0;
+		for (int i = len; i >= 1; --i)
+		{
+			tmp = matrix[begin][begin + i];
+
+			matrix[begin][begin + i] = matrix[begin + len - i][begin];
+			matrix[begin + len - i][begin] = matrix[begin + len][begin + len - i];
+			matrix[begin + len][begin + len - i] = matrix[begin + i][begin + len];
+			matrix[begin + i][begin + len] = tmp;
+
+		}
+	}
+};
+
+// LeetCode 49
+class Solution 
+{
+public:   
+	vector<vector<string>> groupAnagrams(vector<string>& strs) 
+	{
+		map<vector<int>, vector<string> > m;
+		map<vector<int>, vector<string> >::iterator it;        
+		for (int i = 0; i < strs.size(); i++)        
+		{ 
+			vector<int> cnts(26, 0);            
+			for (int j = 0; j < strs[i].size(); j++)            
+			{ //统计各个字符出现的次数
+				cnts[strs[i][j] - 'a']++; 
+			}            
+			it = m.find(cnts);  //找符合要求的数组
+
+			if (it != m.end())
+			{ //找到的话说明是“一类元素”
+				it->second.push_back(strs[i]);
+			}
+			else
+			{ // 没找到的话就是新的单词
+				m.insert(pair<vector<int>, vector<string> >(cnts, vector<string>(strs.begin() + i, strs.begin() + i + 1)));
+			}
+		}
+
+		vector<vector<string> > groups;  
+		for (it = m.begin(); it != m.end(); it++)      
+		{  //汇总
+			sort(it->second.begin(), it->second.end());     
+			groups.push_back(it->second);
+		}        
+		return groups; 
+	} 
+};
+
+// LeetCode 50
+class Solution {
+public:
+	double myPow(double x, int n)
+	{
+		/*
+		-2147483648到底算正数还是负数
+		x=-1 n=-2147483648 >> 1
+		x=2  n=-2147483648 >> 0
+		*/
+
+		//指数为0,  0^0 = 1
+		if (n == 0)
+		{
+			return 1;
+		}
+
+		//注意double与0的比较
+		if (x <= 0.00001 && x > (-0.00001))
+		{
+			return 0;
+		}
+
+		//底数为1或-1
+		if (x == -1 || x == 1)
+		{
+			if (n % 2 == 0 && x == -1)
+			{
+				return -x;
+			}
+			return x;
+		}
+
+		//指数为1
+		if (n == 1)
+		{
+			return x;
+		}
+
+		//无效输入的情况，（-3）^（-3）无效
+		if (n < 0 && x < 0 && n % 2 != 0)
+		{
+			return 0;
+		}
+
+
+		if (n == (int)pow(2, 31))
+		{//底数不为1或-1的时候，该值的结果应该返回0，但是个人感觉该值没有什么意义
+			return 0;
+		}
+
+		double value = 0;
+		bool isminusN = false;	//指数的正负
+
+		if (n < 0)
+		{// n为负数
+			isminusN = true;
+			n *= -1;
+		}
+
+		//获取指数运算的结果
+		value = getNum(x, n);
+
+		//n为偶数时
+		if (isminusN)
+		{//指数为负数
+			return 1 / value;
+		}
+		else
+		{//指数为正数
+			return value;
+		}
+	}
+
+	double getNum(double x, int n)
+	{
+		if (n == 1)
+		{
+			return x;
+		}
+		if (n == 2)
+		{
+			return x*x;
+		}
+		return getNum(x, n / 2)*getNum(x, n - (n / 2));
+	}
+};
