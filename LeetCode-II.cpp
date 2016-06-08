@@ -97,7 +97,7 @@ public:
 		int beginx = i;
 		int beginy = j;			
 		while (beginx > 0 && beginy > 0)
-		{//
+		{
 			if (tmp[--beginx][--beginy] == 'Q')
 			{
 				return false;
