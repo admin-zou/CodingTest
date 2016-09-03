@@ -787,15 +787,15 @@ int main()
 		char c;
 		int b;
 	}u;
-	u.c = 1;
+	u.b = 1;
 
-	if (u.b == 1)
+	if (u.c == 1)
 	{
-		printf("da\n");
+		printf("xiao\n");
 	}
 	else
 	{
-		printf("xiao\n");
+		printf("da\n");
 	}
 	return 0;
 }
