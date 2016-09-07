@@ -1127,11 +1127,11 @@ int main()
 void * Memset(void* dest, int c, size_t count)
 {
 	assert(dest);
-	int *ret = (int*)dest;
-	int *dst = (int*)dest;
+	char *ret = (char*)dest;
+	char *dst = ret;
 	while (count--)
 	{
-		*dst++ = c;
+		*dst++ = (char)c;
 	}
 	return ret;
 }
