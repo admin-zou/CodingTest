@@ -796,3 +796,28 @@ public:
 };
 
 // LeetCode 63
+
+
+
+// LeetCode 72 (word1 -> word2)
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        vector< vector<int> > Dt(word1.size()+1, vector<int> (word2.size()+1));
+        
+        for(int i=0; i<word1.size()+1; ++i){
+            for(int j=0; j<word2.size()+1; ++j){
+                if(0 == i){
+                    Dt[i][j] = j;
+                }else if(0 == j)
+                {
+                    Dt[i][j] = i;
+                }else{
+                    Dt[i][j] = min( Dt[i-1][j-1] + (word1[i-1]==word2[j-1] ? 0:1), min(Dt[i-1][j]+1,Dt[i][j-1]+1));
+                }
+                
+            }
+        }
+        return Dt[word1.size()][word2.size()];
+    }
+};
